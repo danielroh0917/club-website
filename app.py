@@ -28,6 +28,7 @@ def signin():
         username = request.form["username"]
         password = request.form["password"]
         login(username,password)
+        return render_template("login.html")
     else:
         return render_template("login.html")
 
