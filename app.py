@@ -22,6 +22,15 @@ def signup(): # def <-- method 선언 : <-- 얘는 java로치면 {}
         return render_template("signUp.html") # 웹사이트의 각 페이지가 만들어질때마다 이렇게 return해야함
         #지금은 홈페이지가 없어서 index에 signup 페이지 return
 
+@app.route('/login', methods=["GET","POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        login(username,password)
+    else:
+        return render_template("login.html")
+
 if __name__=="__main__":
     app.run(host='127.0.0.1', port=8000)
     # IP address: #.#.#.# --> 0~255 --> Domain name service: www.naver.com

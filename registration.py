@@ -13,7 +13,7 @@ def register(username,password,re_password,birthday,gender,email,phone):
     else:
         print("비밀번호가 일치하지않습니다")
 
-def login(username, password):
+def login(username,password):
     conn = sq.connect("database/project.db")
     cur = conn.cursor()
     cur.execute('SELECT password FROM USERINFO WHERE username=(?)',(username,))
