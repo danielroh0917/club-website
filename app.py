@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request # 이건 따로 설치해야하는 library여서 method나 class의 양이 많기때문에 필요한것만 가져와서 쓸수있게 from을 붙인거
-from registration import register # registration.py
+from registration import register, login # registration.py
 # import random --> python 설치하면 자동으로 설치되는 library의 method/python 파일
 
 app = Flask(__name__) # Flask라는 Object의 객체를 만드는 코드
@@ -23,7 +23,7 @@ def signup(): # def <-- method 선언 : <-- 얘는 java로치면 {}
         #지금은 홈페이지가 없어서 index에 signup 페이지 return
 
 @app.route('/login', methods=["GET","POST"])
-def login():
+def signin():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
