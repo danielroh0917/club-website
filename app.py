@@ -1,11 +1,17 @@
-from flask import Flask, render_template, request # 이건 따로 설치해야하는 library여서 method나 class의 양이 많기때문에 필요한것만 가져와서 쓸수있게 from을 붙인거
+from flask import Flask, render_template, request, flash # 이건 따로 설치해야하는 library여서 method나 class의 양이 많기때문에 필요한것만 가져와서 쓸수있게 from을 붙인거
 from registration import register, login # registration.py
 # import random --> python 설치하면 자동으로 설치되는 library의 method/python 파일
 
 app = Flask(__name__) # Flask라는 Object의 객체를 만드는 코드
+SECRET_KEY = "abc" # 백앤드를 위한 웹사이트 password
+app.config["SECRET_KEY"] = SECRET_KEY
 
 # Get -> Read website data
 # POST -> generate/create new data
+@app.route('/', methods=["GET"])
+def index():
+    return render_template("index.html")
+
 @app.route('/signup', methods=["GET","POST"]) # / <-- 웹사이트의 각 페이지를 구분짓는 표기
 def signup(): # def <-- method 선언 : <-- 얘는 java로치면 {}
     if request.method == "POST":
@@ -27,8 +33,11 @@ def signin():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        login(username,password)
-        return render_template("login.html")
+        if (login(username,password) == True):
+            return redirect(url_for('index'))
+        else:
+            flash("아이디 혹은 비밀번호가 틀렸습니다.") # flash -> html에 메세지를 보낼수있게 해주는 코드
+            return render_template("login.html")
     else:
         return render_template("login.html")
 
