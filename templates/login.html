@@ -22,6 +22,13 @@
 
                     <form action="/login" method="POST">
                       <p>동호회에 가입하고싶다면 로그인해주세요</p>
+                      {%with messages = get_flashed_messages()%}
+                        {%if messages %}
+                          <div class="alert alert-primary" role="alert">
+                            {{messages[0]}}
+                          </div>
+                        {%endif%}
+                      {%endwith%}
 
                       <div class="form-outline mb-4">
                         <input type="username" id="form2Example11" class="form-control" name="username" placeholder="사용자 이름" />
