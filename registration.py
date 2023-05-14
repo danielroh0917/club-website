@@ -6,9 +6,10 @@ def register(username,password,re_password,birthday,gender,email,phone):
     cur = conn.cursor() # cur = database에서 실행되는 모든것들을 책임지는 object(?)
     if password == re_password:
         try: # Primary Key인 username이 이미 존재할때 오류가 뜨지않고 메세지로 보여지게 만드는 코드 (오류가 뜨면 서버에 문제가 생기고 웹사이트가 작동이 안되기때문에 오류 메세지가 필요함)
-            password = password.encode('utf-8')
+            password = password.encode('utf-8') # 비밀번호를 컴퓨터 언어로 암호화
             salt = bcrypt.gensalt() # 한번더 꼬아서 암호화를 해주는 코드
-            hashed = bcrypt.hashpw(password, salt) # 암호화된 password와 salt를 합쳐주는 역할
+            hashed = bcrypt.hashpw(password, salt) # 암호화된 password와 salt를 합쳐주는 역할 -> hash할때 비밀번호가 컴퓨터 언어로 암호화 되어있어야하기때문에 앞에서 encode 해줬음
+            hashed = hashed.decode('utf-8') # database에 저장하기전 encode된 hashed를 decode해줌 (컴퓨터 언어 -> 사람 언어)
             conn.execute("INSERT INTO USERINFO(username,password,birthday,gender,email,phone) VALUES(?,?,?,?,?,?)",(username,hashed,birthday,gender,email,phone))
         except sq.IntegrityError:
             print("Already Exist")
@@ -27,7 +28,11 @@ def login(username,password):
         return False
     #print(user) --> ('qwer',)
     pw = user[0] # 'qwer' # user[0]에서 0은 user(Tuple)에서 index를 의미함
-    password_encoded = password.encode('utf-8') # 유저가 입력한 password를 0과 1로만 이루어진 컴퓨터 언어로 바꿔주는 코드
-    result = bcrypt.checkpw(password_encoded, pw) # pw(hased)를 password_encoded와 마찬가지로 컴퓨터 언어로 바꾼뒤에 userBy와 비교해주는 코드
+    password_encoded = password.encode('utf-8') # 유저가 입력한 password를 컴퓨터 언어로 바꿔주는 코드
+    result = bcrypt.checkpw(password_encoded, pw.encode('utf-8')) # pw.encode('utf-8')를 통해 pw(hashed)를 password_encoded와 마찬가지로 컴퓨터 언어로 바꾼뒤에 둘을 비교해주는 코드
+    if result == True:
+        return True
+    else:
+        return False
 
-login("abcd","123456") #('qwer',)
+login("uiop","mnbv") #('mnbv',)
