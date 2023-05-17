@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, flash # 이건 따로 설치해야하는 library여서 method나 class의 양이 많기때문에 필요한것만 가져와서 쓸수있게 from을 붙인거
+from flask import Flask, render_template, request, flash, redirect, url_for, session # 이건 따로 설치해야하는 library여서 method나 class의 양이 많기때문에 필요한것만 가져와서 쓸수있게 from을 붙인거
 from registration import register, login # registration.py
+from datetime import timedelta
 # import random --> python 설치하면 자동으로 설치되는 library의 method/python 파일
 
 app = Flask(__name__) # Flask라는 Object의 객체를 만드는 코드
 SECRET_KEY = "abc" # 백앤드를 위한 웹사이트 password
 app.config["SECRET_KEY"] = SECRET_KEY
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=60) # 웹사이트에 로그인한 상태로 머물수있는 시간을 제한하는 코드 (60분 뒤에 로그아웃) -> session이 초기화 되는 주기
 
 # Get -> Read website data
 # POST -> generate/create new data
@@ -34,11 +36,14 @@ def signin():
         username = request.form["username"]
         password = request.form["password"]
         if (login(username,password) == True):
+            session['username'] = username # 어떤 유저가 login 되어있는지 구분해주는 역할 (username으로 식별)
             return redirect(url_for('index'))
         else:
             flash("아이디 혹은 비밀번호가 틀렸습니다.") # flash -> html에 메세지를 보낼수있게 해주는 코드
             return render_template("login.html")
     else:
+        if 'username' in session:
+            return redirect(url_for('index'))
         return render_template("login.html")
 
 if __name__=="__main__":
