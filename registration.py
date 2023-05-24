@@ -35,4 +35,32 @@ def login(username,password):
     else:
         return False
 
+def getBirthday(username):
+    conn = sq.connect("database/project.db")
+    cur = conn.cursor()
+    cur.execute('SELECT birthday FROM USERINFO WHERE username=(?)',(username,))
+    birthday = cur.fetchone()
+    return birthday[0]
+
+def getGender(username):
+    conn = sq.connect("database/project.db")
+    cur = conn.cursor()
+    cur.execute('SELECT gender FROM USERINFO WHERE username=(?)',(username,))
+    gender = cur.fetchone()
+    return gender[0]
+
+def getEmail(username):
+    conn = sq.connect("database/project.db")
+    cur = conn.cursor()
+    cur.execute('SELECT email FROM USERINFO WHERE username=(?)',(username,))
+    email = cur.fetchone()
+    return email[0]
+
+def getPhone(username):
+    conn = sq.connect("database/project.db")
+    cur = conn.cursor()
+    cur.execute('SELECT phone FROM USERINFO WHERE username=(?)',(username,))
+    phone = cur.fetchone()
+    return phone[0]
+
 login("uiop","mnbv") #('mnbv',)

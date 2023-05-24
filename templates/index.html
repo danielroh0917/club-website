@@ -58,8 +58,12 @@
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->
-
-      <a href="{{url_for('signin')}}" class="get-started-btn">로그인</a>
+      {%if isLogin == True %}
+            <p><a href="{{url_for('logout')}}">안녕하세요 {{username}}</a></p>  <!-- {{username}}은 app.py에 있는 변수를 가져다 쓰는 코드 -->
+            <!-- <a href="{{url_for('logout')}}" class="get-started-btn">로그아웃</a> -->
+      {%else%}
+            <a href="{{url_for('signin')}}" class="get-started-btn">로그인</a>
+      {%endif%}
 
     </div>
   </header><!-- End Header -->
