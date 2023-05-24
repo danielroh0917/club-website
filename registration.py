@@ -1,15 +1,19 @@
 import sqlite3 as sq # as <-- sqlite3를 sq로 짧게 바꿔주는 코드
 import bcrypt
 
+def hash_password(password):
+    password = password.encode('utf-8') # 비밀번호를 컴퓨터 언어로 암호화
+    salt = bcrypt.gensalt() # 한번더 꼬아서 암호화를 해주는 코드
+    hashed = bcrypt.hashpw(password, salt) # 암호화된 password와 salt를 합쳐주는 역할 -> hash할때 비밀번호가 컴퓨터 언어로 암호화 되어있어야하기때문에 앞에서 encode 해줬음
+    hashed = hashed.decode('utf-8')
+    return hashed
+
 def register(username,password,re_password,birthday,gender,email,phone):
     conn = sq.connect("database/project.db") # conn = database 그자체(?)
     cur = conn.cursor() # cur = database에서 실행되는 모든것들을 책임지는 object(?)
     if password == re_password:
         try: # Primary Key인 username이 이미 존재할때 오류가 뜨지않고 메세지로 보여지게 만드는 코드 (오류가 뜨면 서버에 문제가 생기고 웹사이트가 작동이 안되기때문에 오류 메세지가 필요함)
-            password = password.encode('utf-8') # 비밀번호를 컴퓨터 언어로 암호화
-            salt = bcrypt.gensalt() # 한번더 꼬아서 암호화를 해주는 코드
-            hashed = bcrypt.hashpw(password, salt) # 암호화된 password와 salt를 합쳐주는 역할 -> hash할때 비밀번호가 컴퓨터 언어로 암호화 되어있어야하기때문에 앞에서 encode 해줬음
-            hashed = hashed.decode('utf-8') # database에 저장하기전 encode된 hashed를 decode해줌 (컴퓨터 언어 -> 사람 언어)
+            hashed = hash_password(password)
             conn.execute("INSERT INTO USERINFO(username,password,birthday,gender,email,phone) VALUES(?,?,?,?,?,?)",(username,hashed,birthday,gender,email,phone))
         except sq.IntegrityError:
             print("Already Exist")
@@ -19,6 +23,12 @@ def register(username,password,re_password,birthday,gender,email,phone):
         print("비밀번호가 일치하지않습니다")
 
 def login(username,password):
+    if checkPassword(username, password): # == True는 생략
+        return True
+    else:
+        return False
+
+def checkPassword(username, password):
     conn = sq.connect("database/project.db")
     cur = conn.cursor()
     cur.execute('SELECT password FROM USERINFO WHERE username=(?)',(username,))
@@ -62,5 +72,3 @@ def getPhone(username):
     cur.execute('SELECT phone FROM USERINFO WHERE username=(?)',(username,))
     phone = cur.fetchone()
     return phone[0]
-
-login("uiop","mnbv") #('mnbv',)

@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session # 이건 따로 설치해야하는 library여서 method나 class의 양이 많기때문에 필요한것만 가져와서 쓸수있게 from을 붙인거
 # flask는 html과 python을 연결해주는 역할
-from registration import register, login, getPhone # registration.py
+from registration import register, login, getPhone, getBirthday, getGender, getEmail # registration.py
+from edit import changeInfo
 from datetime import timedelta
 # import random --> python 설치하면 자동으로 설치되는 library의 method/python 파일
 
@@ -58,6 +59,22 @@ def logout():
 @app.route('/userinfo')
 def userinfo():
     return render_template("userinfo.html", username = session['username'], birthday = getBirthday(session['username']), gender = getGender(session['username']), email = getEmail(session['username']), phone = getPhone(session['username']))
+
+@app.route('/editinfo', methods=["GET","POST"])
+def editinfo():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        new_password = request.form["re-password"]
+        birthday = request.form.get("birthday")
+        gender = request.form.get("gender")
+        phone = request.form["phone"]
+        email = request.form["email"]
+        print(username,password,new_password,birthday,gender,email,phone)
+        changeInfo(username,password,new_password,birthday,gender,email,phone)
+        print("Success")
+    else: # Get Request
+        return render_template("editinfo.html")
 
 if __name__=="__main__":
     app.run(host='127.0.0.1', port=8000)
